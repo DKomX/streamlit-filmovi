@@ -55,13 +55,16 @@ if st.button("Izbriši film"):
         if f"{row['NASLOV']} ({row['GODINA']})" == film_za_brisanje:
             try:
                 worksheet.delete_rows(idx + 2)
-                st.success("Film je uspješno izbrisan")
             except gspread.exceptions.APIError:
                 st.error("Ne mogu obrisati red. Provjerite Sheet ili zaštitu redova.")
-            st.experimental_rerun()
+            else:
+                st.success("Film je uspješno izbrisan")
+                st.experimental_rerun()
             break
+
 
 # ------------------- TOP 3 FILMA -------------------
 st.subheader("TOP 3 FILMA")
 top3 = df.sort_values(by="OCJENA", ascending=False).head(3)
 st.table(top3)
+
