@@ -7,7 +7,7 @@ SHEET_URL=st.secrets["sheet_url"]
 SHEET_NAME="filmovi"
 df, worksheet=ucitaj_podatke(SHEET_URL, SHEET_NAME) #dt znaci dataframe
 df["GODINA"]=pd.to_numeric(df["GODINA"]) #pretvaramo godine i ocjene u cijele brojeve
-df["OCJENE"]=pd.to_numeric(df["OCJENE"])
+df["OCJENA"]=pd.to_numeric(df["OCJENA"])
 st.title("Moji omiljeni filmovi")
 st.subheader("Trenutni popis filmova")
 st.dataframe(df)
@@ -50,3 +50,4 @@ st.subheader("TOP 3 FILMA")
 
 top3=df.sort_values(by="Ocjena",ascending=False).head(3)
 st.table(top3)
+
