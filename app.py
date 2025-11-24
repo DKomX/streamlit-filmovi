@@ -37,12 +37,12 @@ if godina_filt:
 
 st.dataframe(filtrirani)
 
-filmovi_opcije=df.apply(lambda row: f"{row["Naslov"]} ({row["Godina"]})", axis=1).tolist()  #axis=1 znaci da ide red po red ova lambda funkcija / .tolist znaci da pretvori sve u listu
+filmovi_opcije=df.apply(lambda row: f"{row['Naslov'} ({row['Godina']})", axis=1).tolist()  #axis=1 znaci da ide red po red ova lambda funkcija / .tolist znaci da pretvori sve u listu
 film_za_brisanje=st.selectbox("Odaberi film za brisanje", options=filmovi_opcije) #selectbox je padajuci izbornik
 
 if st.button("Izbriši film"):
     for idx,row in df.iterrows():
-        if f"{row["Naslov"]} ({row["Godina"]})"==film_za_brisanje:
+        if f"{row['Naslov']} ({row['Godina']})"==film_za_brisanje:
             worksheet.delete_rows(idx+2) 
             st.success("Film je uspješno izbrisan")
             st.rerun()
@@ -50,4 +50,5 @@ st.subheader("TOP 3 FILMA")
 
 top3=df.sort_values(by="Ocjena",ascending=False).head(3)
 st.table(top3)
+
 
