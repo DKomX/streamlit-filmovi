@@ -1,22 +1,22 @@
 import streamlit as st
 import pandas as pd
-from ucitaj import ucitaj_podatke
 import gspread
+from ucitaj import ucitaj_podatke
 
-# ------------------- Učitavanje podataka -------------------
-SHEET_URL  = st.secrets["sheet_url"]
+# Učitavanje podataka
+SHEET_URL = st.secrets["sheet_url"]
 SHEET_NAME = "filmovi"
 df, worksheet = ucitaj_podatke(SHEET_URL, SHEET_NAME)
 
 df["GODINA"] = pd.to_numeric(df["GODINA"], errors="coerce")
 df["OCJENA"] = pd.to_numeric(df["OCJENA"], errors="coerce")
 
-# ------------------- Prikaz podataka -------------------
+# Prikaz postojećih filmova
 st.title("Moji omiljeni filmovi")
 st.subheader("Trenutni popis filmova")
 st.dataframe(df)
 
-# ------------------- Dodavanje novog filma -------------------
+# Dodavanje filma
 st.subheader("Dodaj novi film")
 naslov = st.text_input("NASLOV")
 godina = st.number_input("GODINA", step=1, format="%d")
@@ -25,14 +25,12 @@ ocjena = st.slider("OCJENA", 1, 10)
 
 if st.button("Dodaj film"):
     if naslov and zanr:
-        novi_red = [naslov, int(godina), zanr, int(ocjena)]
-        worksheet.append_row(novi_red)
-        st.success("Film je uspješno dodan")
-        st.experimental_rerun()
+        worksheet.append_row([naslov, int(godina), zanr, int(ocjena)])
+        st.success("Film je uspješno dodan! Osvježite stranicu da vidite promjene.")
     else:
         st.warning("Unesite NASLOV i ŽANR.")
 
-# ------------------- Pretraživanje filmova -------------------
+# Pretraživanje
 st.subheader("Pretraži filmove")
 filtrirani = df.copy()
 
@@ -46,25 +44,22 @@ if godina_filt:
 
 st.dataframe(filtrirani)
 
-# ------------------- Brisanje filma -------------------
-filmovi_opcije = df.apply(lambda row: f"{row['NASLOV']} ({row['GODINA']})", axis=1).tolist()
-film_za_brisanje = st.selectbox("Odaberi film za brisanje", options=filmovi_opcije)
+# Brisanje filma
+st.subheader("Izbriši film")
+filmovi_opcije = df.apply(lambda r: f"{r['NASLOV']} ({r['GODINA']})", axis=1).tolist()
+film_za_brisanje = st.selectbox("Odaberi film za brisanje", filmovi_opcije)
 
 if st.button("Izbriši film"):
     for idx, row in df.iterrows():
         if f"{row['NASLOV']} ({row['GODINA']})" == film_za_brisanje:
             try:
-                worksheet.delete_rows(idx + 2)
+                worksheet.delete_rows(idx + 2)  # header + zero-index
+                st.success("Film izbrisan! Ručno osvježite stranicu za prikaz promjena.")
             except gspread.exceptions.APIError:
-                st.error("Ne mogu obrisati red. Provjerite Sheet ili zaštitu redova.")
-            else:
-                st.success("Film je uspješno izbrisan")
-                st.experimental_rerun()
+                st.error("Ne mogu obrisati red. Provjerite dopuštenja ili Google Sheets API.")
             break
 
-
-# ------------------- TOP 3 FILMA -------------------
+# Top 3
 st.subheader("TOP 3 FILMA")
 top3 = df.sort_values(by="OCJENA", ascending=False).head(3)
 st.table(top3)
-
