@@ -22,11 +22,11 @@ The user can:
 
 project/
 │
-├── app.py # Main Streamlit application
-├── ucitaj.py # Module for loading data from Google Sheets
+├── app.py #Main Streamlit application
+├── ucitaj.py #Module for loading data from Google Sheets
 │
-├── requirements.txt # List of Python packages
-└── README.md # Documentation
+├── requirements.txt# List of Python packages
+└── README.md# Documentation
 
 # Setting up Google Sheets API
 The application uses Streamlit secrets for secure storage of data.
