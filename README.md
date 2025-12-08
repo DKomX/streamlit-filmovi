@@ -1,4 +1,4 @@
-# streamlit-filmovi
+# streamlit-movies
 # Application for managing a list of favorite films (Streamlit + Google Sheets)
 
 # Project description
